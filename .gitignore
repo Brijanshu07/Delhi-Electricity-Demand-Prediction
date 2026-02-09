@@ -27,6 +27,5 @@ Thumbs.db
 
 # Project Specific
 BACKEND/sldc.html
-MODEL/processed/
 .gemini/
 .agent/

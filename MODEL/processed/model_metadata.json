@@ -1,0 +1,31 @@
+{
+  "feature_columns": [
+    "hour",
+    "day_of_week",
+    "is_weekend",
+    "sin_hour",
+    "cos_hour",
+    "temp",
+    "rhum",
+    "dwpt",
+    "wdir",
+    "wspd",
+    "pres",
+    "month",
+    "day",
+    "sin_month",
+    "cos_month",
+    "cooling_degree",
+    "temp_x_rhum",
+    "peak_hour",
+    "summer_month"
+  ],
+  "residual_std": 341.46637753243436,
+  "target_mean": 3802.3067595621897,
+  "target_std": 1229.2624457684733,
+  "val_r2": 0.7765845028844358,
+  "val_rmse": 563.23536179539,
+  "val_mape": 10.83023621218584,
+  "train_r2": 0.9235845332541324,
+  "confidence_base": 0.95
+}

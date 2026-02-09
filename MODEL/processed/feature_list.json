@@ -1,0 +1,21 @@
+[
+  "hour",
+  "day_of_week",
+  "is_weekend",
+  "sin_hour",
+  "cos_hour",
+  "temp",
+  "rhum",
+  "dwpt",
+  "wdir",
+  "wspd",
+  "pres",
+  "month",
+  "day",
+  "sin_month",
+  "cos_month",
+  "cooling_degree",
+  "temp_x_rhum",
+  "peak_hour",
+  "summer_month"
+]
