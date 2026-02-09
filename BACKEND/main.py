@@ -671,3 +671,29 @@ def startup():
         print("❌ Model not found")
     else:
         print("✅ Model loaded successfully")
+
+@app.get("/api/metrics")
+def api_metrics():
+    series = get_next_n_hours(24)
+
+    if not series:
+        return {
+            "peakLoad": 0,
+            "peakHour": "N/A",
+            "avgLoad": 0,
+            "changeVsYesterday": 0,
+            "currentLoadSLDC": None
+        }
+
+    df = pd.DataFrame(series)
+
+    peak_row = df.loc[df["predicted_load"].idxmax()]
+    avg_load = df["predicted_load"].mean()
+
+    return {
+        "peakLoad": round(float(peak_row["predicted_load"]), 2),
+        "peakHour": f'{int(peak_row["hour"]):02d}:00',
+        "avgLoad": round(float(avg_load), 2),
+        "changeVsYesterday": 0,      # keep 0 unless you re-add CSV logic
+        "currentLoadSLDC": None      # keep None unless you re-add scraping
+    }
