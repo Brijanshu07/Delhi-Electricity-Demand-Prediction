@@ -470,6 +470,3 @@ def startup():
     else:
         print("WARNING: Model not found. Run MODEL/train_model.py and ensure demand_model.joblib exists.")
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
