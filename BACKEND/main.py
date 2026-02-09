@@ -57,13 +57,28 @@ def load_model():
 
 app = FastAPI(title="Delhi Electricity Demand API")
 
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["https://delhi-peak-electricity-demand.netlify.app"],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origin_regex=r"https://.*netlify\.app",
+#     allow_credentials=True,
+#     allow_methods=["GET", "POST", "OPTIONS"],
+#     allow_headers=["*"],
+# )
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://delhi-peak-electricity-demand.netlify.app"],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 class PredictRequest(BaseModel):
     date: str
