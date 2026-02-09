@@ -1,6 +1,6 @@
 [build]
   publish = "FRONTEND/dist"
-  command = "cd FRONTEND && npm run build"
+  command = "cd FRONTEND && npm install && npm run build"
 
 [build.environment]
   NODE_VERSION = "18"
