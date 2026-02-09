@@ -629,9 +629,15 @@ def get_next_n_hours(n: int):
             "timestamp": t.isoformat(),
             "hour": t.hour,
             "temp": round(temp, 1),
+            "dwpt": round(temp - (100 - rhum) / 5, 1),
             "rhum": rhum,
+            "wdir": 180,
+            "wspd": 3.0,
+            "pres": 1010.0,
+            "actual_load": None,
             "predicted_load": round(base_pred * CALIBRATION_FACTOR, 2),
         })
+
 
     return out
 
