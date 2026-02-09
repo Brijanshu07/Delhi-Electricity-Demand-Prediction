@@ -404,7 +404,8 @@ def get_next_n_hours(n: int, temp: float = None, rhum: float = None):
         feats["wdir"] = w.get("wdir", feats["wdir"])
         feats["pres"] = w.get("pres", feats["pres"])
         
-        X = pd.DataFrame([feats])[feature_columns].fillna(0)
+        X = pd.DataFrame([feats], columns=feature_columns).fillna(0)
+
         base_pred = float(model.predict(X)[0])
         
         final_pred = base_pred * CALIBRATION_FACTOR * ai_factor
@@ -448,7 +449,7 @@ def predict_demand(req: PredictRequest):
     if model is None:
         raise HTTPException(status_code=503, detail="Model not loaded. Run MODEL/train_model.py first.")
     features = build_features_from_scenario(req.date, req.temp, req.humidity, req.scenario)
-    X = pd.DataFrame([features])[feature_columns]
+    X = pd.DataFrame([features], columns=feature_columns).fillna(0)
     pred = float(model.predict(X.fillna(0))[0])
     pred = pred * CALIBRATION_FACTOR
     confidence = float(model_metadata.get("confidence_base", 0.92))
