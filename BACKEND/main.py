@@ -59,7 +59,7 @@ app = FastAPI(title="Delhi Electricity Demand API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://6989d2db8fe20a0008562eb8--delhi-peak-load-prediciton.netlify.app"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
