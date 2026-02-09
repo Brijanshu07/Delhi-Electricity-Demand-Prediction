@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: delhi-electricity-backend
+    runtime: python3
+    buildCommand: pip install -r BACKEND/requirements.txt
+    startCommand: cd BACKEND && uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: TOMORROW_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: PORT
+        fromService:
+          type: web
+          name: delhi-electricity-backend
+          property: port
