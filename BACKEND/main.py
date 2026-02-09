@@ -59,7 +59,7 @@ app = FastAPI(title="Delhi Electricity Demand API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://6989d2db8fe20a0008562eb8--delhi-peak-load-prediciton.netlify.app"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -470,3 +470,8 @@ def startup():
     else:
         print("WARNING: Model not found. Run MODEL/train_model.py and ensure demand_model.joblib exists.")
 
+# if __name__ == "__main__":
+#     import uvicorn
+#     uvicorn.run(app, host="0.0.0.0", port=8000)
+    
+# To run: uvicorn main:app --host 0.0.0.0 --port 8000

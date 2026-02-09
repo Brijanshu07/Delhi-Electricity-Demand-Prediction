@@ -13,4 +13,4 @@
   status = 200
 
 [context.production.environment]
-  VITE_API_BASE_URL = "https://your-render-backend-url.onrender.com"
+  VITE_API_BASE_URL = "https://delhi-electricity-demand-backend.onrender.com"
