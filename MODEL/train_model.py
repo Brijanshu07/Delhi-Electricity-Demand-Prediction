@@ -1,15 +1,9 @@
-# ==============================================
-# Delhi Electricity Demand - XGBoost Training
-# Rich features + validation + high-confidence metadata
-# ==============================================
-
 import json
 import joblib
 import pandas as pd
 import numpy as np
 from pathlib import Path
 
-# Optional: use xgboost if available, else sklearn GradientBoosting
 try:
     import xgboost as xgb
     USE_XGB = True
@@ -18,35 +12,25 @@ except ImportError:
     USE_XGB = False
 
 
-
-# -------------------------------
-# Paths
-# -------------------------------
 MODEL_DIR = Path(__file__).resolve().parent
 PROCESSED_DIR = MODEL_DIR / "processed"
 DATA_DIR = MODEL_DIR / "data"
 
 PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
 
-# Base features (available from API: date, temp, humidity, scenario)
 BASE_FEATURE_COLS = [
     "hour", "day_of_week", "is_weekend", "sin_hour", "cos_hour",
     "temp", "rhum", "dwpt", "wdir", "wspd", "pres",
 ]
-# Additional engineered features (computed in train from datetime + weather)
 DERIVED_FEATURE_COLS = [
     "month", "day",
     "sin_month", "cos_month",
-    "cooling_degree",      # max(0, temp - 24) — cooling demand proxy
-    "temp_x_rhum",         # heat discomfort / AC demand proxy
-    "peak_hour",           # 1 if 10 <= hour <= 18 (afternoon peak)
-    "summer_month",        # 1 if Apr–Jun (peak demand season in Delhi)
-]
+    "cooling_degree",      
+    "temp_x_rhum",        
+    "peak_hour",          
+    "summer_month",       
 FEATURE_COLS = BASE_FEATURE_COLS + DERIVED_FEATURE_COLS
 
-# -------------------------------
-# Load data
-# -------------------------------
 train_path = PROCESSED_DIR / "train_preprocessed.csv"
 if not train_path.exists():
     raise FileNotFoundError(
@@ -56,15 +40,10 @@ if not train_path.exists():
 df = pd.read_csv(train_path, parse_dates=["datetime"], index_col="datetime")
 df = df.sort_index()
 
-# Ensure base feature columns exist
 missing_base = [c for c in BASE_FEATURE_COLS if c not in df.columns]
 if missing_base:
     raise ValueError(f"Missing columns in CSV: {missing_base}")
 
-# -------------------------------
-# Engineer additional features
-# -------------------------------
-# month, day already in CSV from del.py (year, month, day, hour, minute)
 if "month" not in df.columns:
     df["month"] = df.index.month
 if "day" not in df.columns:
