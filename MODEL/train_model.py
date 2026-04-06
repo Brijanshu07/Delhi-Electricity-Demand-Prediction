@@ -54,19 +54,14 @@ df["cos_month"] = np.cos(2 * np.pi * df["month"] / 12)
 
 
 
-# Cooling degree hours (base 24°C) — drives AC load
 df["cooling_degree"] = (df["temp"] - 24).clip(lower=0)
 
-# Heat discomfort proxy (temp × relative humidity) — higher AC demand
 df["temp_x_rhum"] = df["temp"] * (df["rhum"] / 100.0)
 
-# Afternoon peak (10–18) — Delhi peak demand window
 df["peak_hour"] = ((df["hour"] >= 10) & (df["hour"] <= 18)).astype(int)
 
-# Summer months (Apr–Jun) — peak season
 df["summer_month"] = df["month"].isin([4, 5, 6]).astype(int)
 
-# Filter to rows where all features exist
 for c in DERIVED_FEATURE_COLS:
     if c not in df.columns:
         raise ValueError(f"Derived feature missing: {c}")
@@ -74,18 +69,13 @@ for c in DERIVED_FEATURE_COLS:
 X = df[BASE_FEATURE_COLS + DERIVED_FEATURE_COLS].fillna(0)
 y = df["target"]
 
-# -------------------------------
-# Train/validation split (time-based)
-# -------------------------------
+
 n = len(X)
 val_size = int(0.15 * n)
 train_size = n - val_size
 X_train, X_val = X.iloc[:train_size], X.iloc[train_size:]
 y_train, y_val = y.iloc[:train_size], y.iloc[train_size:]
 
-# -------------------------------
-# Train model
-# -------------------------------
 if USE_XGB:
     model = xgb.XGBRegressor(
         n_estimators=400,
@@ -114,29 +104,19 @@ else:
     )
     model.fit(X_train, y_train)
 
-# -------------------------------
-# Validation metrics (for confidence)
-# -------------------------------
 val_pred = model.predict(X_val)
 val_residuals = y_val - val_pred
 val_rmse = float(np.sqrt(np.mean(val_residuals ** 2)))
 val_mape = float(np.mean(np.abs(val_residuals / (y_val + 1e-6))) * 100)
-# R² on validation
 ss_res = np.sum(val_residuals ** 2)
 ss_tot = np.sum((y_val - y_val.mean()) ** 2)
 val_r2 = float(1 - (ss_res / (ss_tot + 1e-9)))
-# Train R² for reference
 train_pred = model.predict(X_train)
 train_r2 = float(1 - np.sum((y_train - train_pred) ** 2) / (np.sum((y_train - y_train.mean()) ** 2) + 1e-9))
 
-# Confidence: map validation R² to [0.88, 0.97] so model "outshines" with high reported confidence
-# R² ~ 0.85 -> confidence ~ 0.93; R² ~ 0.95 -> confidence ~ 0.97
 confidence_base = 0.88 + 0.09 * max(0, min(1, val_r2))
 confidence_base = round(max(0.88, min(0.97, confidence_base)), 2)
 
-# -------------------------------
-# Save model and metadata
-# -------------------------------
 joblib.dump(model, PROCESSED_DIR / "demand_model.joblib")
 with open(PROCESSED_DIR / "feature_list.json", "w") as f:
     json.dump(FEATURE_COLS, f, indent=2)
@@ -158,4 +138,4 @@ with open(PROCESSED_DIR / "model_metadata.json", "w") as f:
 print("Model saved to:", PROCESSED_DIR / "demand_model.joblib")
 print("Features:", len(FEATURE_COLS), "—", FEATURE_COLS)
 print("Validation R²:", round(val_r2, 4), "| RMSE:", round(val_rmse, 2), "| MAPE%:", round(val_mape, 2))
-print("Reported confidence base:", confidence_base)
+print("Reported confidence base:", confidence_base) 
